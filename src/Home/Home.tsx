@@ -4,48 +4,92 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import { Button, Link, ThemeProvider } from '@mui/material';
 import { theme } from '../theme';
+import { toast } from 'react-toastify';
 
 const Home = () => {
   const [credentials, setCredentials] = useState({ username: '', password: '' });
 
   const handleCredentialsChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { id, value } = event.target;
-    setCredentials((prevCredentials) => ({ ...prevCredentials, [id]: value }));
+    const { value } = event.target;
+    setCredentials((prevCredentials) => ({ ...prevCredentials, username: value }));
+  };
+
+  const handleCredentialsChangePwd = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target;
+    setCredentials((prevCredentials) => ({ ...prevCredentials, password: value }));
   };
 
   const handleForgotPassword = () => {
-    // Logic to handle the "Mot de passe oublié" functionality
-    // Redirect the user to the password reset page
-    // You can implement your own logic here
     console.log("Mot de passe oublié");
   };
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     // Logique pour gérer la soumission du formulaire de connexion
     try {
+      console.log("cc")
       //TODO : voir nom serveur
-      const response = await fetch('http://localhost:3000/api/connexion', {
+      const response = await fetch('http://localhost:8080/api/connexion', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(credentials)
-      });
-      const data = await response.json();
+      }
+      );
+      console.log("response" + JSON.stringify(credentials));
+
+      if(response.ok){
+              const data = await response.json();
+      console.log("response" + data);
+
           if (data.success && data.token) {
-      // Stocker le token dans le localStorage
-      localStorage.setItem('authToken', data.token);
-      // Rediriger l'utilisateur vers la page appropriée
-        window.location.href = '/app'; // Rediriger l'utilisateur vers la page appropriée
+            // Stocker le token dans le localStorage
+            localStorage.setItem('authToken', data.token);
+            // Rediriger l'utilisateur vers la page appropriée
+            window.location.href = '/app';
+            console.log("gg wp")
+          } else {
+            // La connexion a échoué, afficher un message d'erreur à l'utilisateur
+            console.log("sale merde")
+            toast.warn("La tentative de connexion a échoué, pas sûr que ce soit de votre faute", {
+              position: "bottom-center",
+              autoClose: 5000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "colored",
+            }) 
+          }
       } else {
-      // La connexion a échoué, afficher un message d'erreur à l'utilisateur
-      // ...
-    }
+        // Gérer le cas où la réponse n'est pas "ok"
+        console.error('Erreur de réponse du serveur:', response.status, response.statusText);
+        toast.warn("Erreur lors de la connexion au serveur", {
+          position: "bottom-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",        
+        });
+       }
     } catch (error) {
       console.error('Erreur lors de la connexion', error);
       // Afficher un message d'erreur à l'utilisateur
+      toast.warn("Erreur lors de la tentative de connexion (mauvais identifiants ?)", {
+        position: "bottom-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        })
     }
-    // ...
   };
 
   return (
@@ -54,7 +98,7 @@ const Home = () => {
       <h1 id='welcome'>Bienvenue sur Envy Plan !</h1>
       <div className="sub">
       <h3> <span style={{textDecorationLine: 'underline'}}> TODO :</span> Se connecter pour continuer </h3>
-      <Box component="form" onSubmit={handleSubmit} sx={{ '& > :not(style)': { m: 1, width: '25ch', color:'primary'  },}} noValidate autoComplete="off" >
+      <Box component="form" onSubmit={handleSubmit} sx={{ '& > :not(style)': { m: 1, width: '25ch', color:'primary' },}} noValidate autoComplete="off" >
         <div>
           <TextField required className="custom-textfield" label="Pseudo" variant="outlined"  
                       value={credentials.username} onChange={handleCredentialsChange}  autoFocus/>
@@ -62,14 +106,14 @@ const Home = () => {
         <div>
           <TextField required className="custom-textfield" label="Mot de passe" type="password"
                      autoComplete="current-password" value={credentials.password}
-                     onChange={handleCredentialsChange}/>
+                     onChange={handleCredentialsChangePwd}/>
           <div>
-              <Link className="forgot-psw" href="./App.tsx" onClick={handleForgotPassword}>
+              <Link className="forgot-psw" href="#" onClick={handleForgotPassword}>
                 Mot de passe oublié
               </Link>
           </div>
         </div>
-        <Button className="btn-connexion" type="submit" href=" " variant="contained" 
+        <Button className="btn-connexion" type="submit" variant="contained" 
                 sx={{  borderRadius: '1.25rem', textTransform: 'capitalize' }} color="primary">
                   Connexion
         </Button>
