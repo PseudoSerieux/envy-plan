@@ -1,0 +1,41 @@
+@import '../../styles/variables.css';
+
+body {
+  background-color: var(--body-color);
+  font-family: 'Josefin Sans', sans-serif;
+  color: var(--purple-color);
+}
+
+.title{
+  box-sizing: border-box;
+  position: absolute;
+
+  background: rgba(128, 0, 128, 0.6);
+  color: var(--white-color);
+  top: 12%;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 10px;
+}
+
+.sub {
+  box-sizing: border-box;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%); /*responsive*/
+  padding: 0 4%;
+  background: var(--white-color);
+  border-bottom: 1px solid var(--purple-color);
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 10px;
+}
+
+.forgot-psw {
+  margin-left: 24%;
+  text-decoration: underline;
+  color: var(--light-purple-color);
+} 
+
+.divider {
+  border: 1px solid rgba(156, 40, 227, 0.47);
+}  

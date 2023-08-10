@@ -3,6 +3,7 @@
     --purple-color: #9C28E3;
     --white-color: #FFFFFF;
     --green-color: #90EE90;
+    --light-purple-color: #bd93d8;
     --yellow-color: #FFD700;
     --finish-color: #D3D3D3;
     --info-color: #17a2b8;
@@ -10,7 +11,7 @@
 
 @font-face {
   font-family: 'Josefin Sans';
-  src: url('../assets/JosefinSans-VariableFont_wght.ttf') format('truetype');
+  src: url('../assets/textual/JosefinSans-VariableFont_wght.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
 }

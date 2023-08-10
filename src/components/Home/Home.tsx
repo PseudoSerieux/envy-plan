@@ -2,9 +2,11 @@ import React, { useState } from 'react';
 import './Home.css'
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
-import { Button, Link, ThemeProvider } from '@mui/material';
-import { theme } from '../theme';
+import { Button, Container, Divider, Grid } from '@mui/material';
+import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import Todo from '../../assets/images/checklist.png';
+import TipsAndUpdatesOutlinedIcon from '@mui/icons-material/TipsAndUpdatesOutlined';
 
 const Home = () => {
   const [credentials, setCredentials] = useState({ username: '', password: '' });
@@ -93,39 +95,55 @@ const Home = () => {
   };
 
   return (
-    <ThemeProvider theme={theme}>
-    <div className="container">
-      <h1 id='welcome'>Bienvenue sur Envy Plan !</h1>
-      <div className="sub">
-      <h3> <span style={{textDecorationLine: 'underline'}}> TODO :</span> Se connecter pour continuer </h3>
-      <Box component="form" onSubmit={handleSubmit} sx={{ '& > :not(style)': { m: 1, width: '25ch', color:'primary' },}} noValidate autoComplete="off" >
-        <div>
-          <TextField required className="custom-textfield" label="Pseudo" variant="outlined"  
-                      value={credentials.username} onChange={handleCredentialsChange}  autoFocus/>
-        </div>
-        <div>
-          <TextField required className="custom-textfield" label="Mot de passe" type="password"
-                     autoComplete="current-password" value={credentials.password}
-                     onChange={handleCredentialsChangePwd}/>
-          <div>
-              <Link className="forgot-psw" href="#" onClick={handleForgotPassword}>
-                Mot de passe oublié
-              </Link>
-          </div>
-        </div>
-        <Button className="btn-connexion" type="submit" variant="contained" 
-                sx={{  borderRadius: '1.25rem', textTransform: 'capitalize' }} color="primary">
-                  Connexion
-        </Button>
-        <hr/>
-        <Button variant='outlined' className="btn-inscription" href=" " 
-                sx={{ borderRadius: '1.25rem', textTransform: 'capitalize' }}>
-                  Inscription
-        </Button>
+    <Container fixed className="container">
+      <Grid container direction="column" justifyContent="center" alignItems="center">
+      <Box className="title" sx={{ display: 'flex', alignItems: 'center', p:2}}>
+
+      <h1> Bienvenue sur Envy Plan !</h1>
+
       </Box>
-      </div>
-    </div>
-    </ThemeProvider>
+      </Grid>
+      <Box className="sub" component="form" onSubmit={handleSubmit} noValidate autoComplete="off">
+        <Grid container direction="column" justifyContent="center" alignItems="center">
+          <Box sx={{ display: 'flex', alignItems: 'center', p:3, fontSize: '1.3rem' }}>
+            <TipsAndUpdatesOutlinedIcon/><span style={{textDecorationLine: 'underline', fontWeight: 'bold'}}> TODO</span> &nbsp; : Se connecter pour continuer
+          </Box>
+
+          <Grid item p={1}>
+            <TextField required label="Pseudo" variant="outlined"  
+                       value={credentials.username} onChange={handleCredentialsChange}  autoFocus/>
+          </Grid>
+          <Grid item p={1}>
+            <TextField required label="Mot de passe" type="password"
+                       autoComplete="current-password" value={credentials.password}
+                       onChange={handleCredentialsChangePwd}/>
+            <Grid item pt={2}>
+                <Link className="forgot-psw" to="/#" onClick={handleForgotPassword}>
+                  Mot de passe oublié
+                </Link>
+            </Grid>
+          </Grid>
+        </Grid>
+
+        <Grid item pt={3} display="flex" justifyContent="center" alignItems="center">
+          <Link to="/#">
+            <Button size="large" className="btn-connexion" type="submit" variant="contained"
+            sx={{ borderRadius: '1.25rem', textTransform: 'capitalize', px: 6, fontWeight: 'bold'}} color="primary">
+              Connexion
+            </Button>
+          </Link>
+        </Grid>
+        <Divider sx={{p:2}}> OU </Divider>
+        <Grid item pb={3} display="flex" justifyContent="center" alignItems="center">
+          <Link to="/inscription">
+            <Button size="large" variant='outlined' className="btn-inscription" sx={{ borderRadius: '1.25rem', textTransform: 'capitalize', px: 6}}>
+              Inscription
+            </Button>
+          </Link>
+        </Grid>
+
+      </Box>
+    </Container>
   );
 };
 
