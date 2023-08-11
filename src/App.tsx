@@ -7,7 +7,7 @@ import Home from './components/Home/Home';
 import Inscription from './components/Inscription/Inscription';
 
 const App = () => {
-  const [loggedIn, setLoggedIn] = React.useState(false);
+  // const [loggedIn, setLoggedIn] = React.useState(false);
 
   return (
     <ThemeProvider theme={theme}>

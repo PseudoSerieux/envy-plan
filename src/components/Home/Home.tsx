@@ -5,7 +5,6 @@ import TextField from '@mui/material/TextField';
 import { Button, Container, Divider, Grid } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import Todo from '../../assets/images/checklist.png';
 import TipsAndUpdatesOutlinedIcon from '@mui/icons-material/TipsAndUpdatesOutlined';
 
 const Home = () => {
@@ -108,7 +107,7 @@ const Home = () => {
           <Box sx={{ display: 'flex', alignItems: 'center', p:3, fontSize: '1.3rem' }}>
             <TipsAndUpdatesOutlinedIcon/><span style={{textDecorationLine: 'underline', fontWeight: 'bold'}}> TODO</span> &nbsp; : Se connecter pour continuer
           </Box>
-
+{/* Besoin d'un FormControl */}
           <Grid item p={1}>
             <TextField required label="Pseudo" variant="outlined"  
                        value={credentials.username} onChange={handleCredentialsChange}  autoFocus/>
