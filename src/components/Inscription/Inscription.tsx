@@ -20,6 +20,13 @@ const Inscription = () => {
     password: yup.string().required().length(8).uppercase().lowercase(),
   });
 
+  //Controle Pseudo
+  const [username, setUsername] = useState('');
+
+  const handleChangeUsername = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setUsername(e.target.value);
+  };
+
   //Controle Email
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
@@ -59,24 +66,90 @@ const Inscription = () => {
   }, [form.formState, handleBlurPwd]);
 
   //helper down pswd
-  function MyFormHelperText() {
+  function MyFormHelperText({ errorPwd = 'No error' }) {
     const { focused } = useFormControl() || {};
-  
+    
     const helperText = React.useMemo(() => {
       if (focused) {
         return 'This field is being focused';
       }
-  
-      return 'Helper text';
-    }, [focused]);
-    return (<FormHelperText>{helperText}</FormHelperText>);
-  }
+    
+        return errorPwd;
+      }, [errorPwd, focused]);
+      console.log(errorPwd);
+      return (<FormHelperText>{helperText}</FormHelperText>);
+    }
+
+    //Controle conf == pwd
+    const [confirmPassword, setConfirmPassword] = useState('');
+
+    const handleChangeConfirmPwd = (e: React.ChangeEvent<HTMLInputElement>) => {
+      setConfirmPassword(e.target.value);
+    };
 
   //Submit
-  function handleSubmit(event: FormEvent<HTMLFormElement>): void {
-    // submitForm(form.getValues());
-    throw new Error('Function not implemented.');
-  }
+  const [isLoading, setIsLoading] = useState(false);
+
+  function handleSubmit(e: FormEvent<HTMLFormElement>): void {
+    e.preventDefault();
+
+    if (password !== confirmPassword) {
+      alert('Les mots de passe ne correspondent pas.');
+      return;
+    }
+    setIsLoading(true);
+
+    // Envoi du formulaire au serveur
+    const values = {
+      username,
+      email,
+      password,
+      confirmPassword,
+    };
+  
+    const submitForm = async () => {
+      try {
+        const response = await fetch('/api/inscription', {
+          method: 'POST',
+          body: JSON.stringify(values),
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+  
+        if (response.status === 200) {
+          setIsLoading(false);
+          toast.success('Done : Vous êtes bien inscrit !', {
+            position: "top-center",
+            autoClose: 36000,
+            hideProgressBar: false,
+            closeOnClick: false,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+            });
+          window.location.href = '/';
+        } else {
+          toast.warning('Une erreur s\'est produite lors de votre inscription', {
+            position: "top-center",
+            autoClose: 36000,
+            hideProgressBar: false,
+            closeOnClick: false,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+            });
+          console.log('Erreur lors de l\'inscription');
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+  
+    submitForm();
+  };
 
     return (
         <Container>
@@ -88,42 +161,39 @@ const Inscription = () => {
               {/* une mémoire qui ne vous fait jamais défaut ? */}
               </Box>
 
-              {/* TODO : formControl : MyFormHelper + Conf mdp*/}
               <FormControl>
-              <Grid item p={1} display="flex" justifyContent="center" alignItems="center">
-                <TextField required label="Pseudo" variant="outlined"  
-                           autoFocus />
-              </Grid>
-              <Grid item p={1} display="flex" justifyContent="center" alignItems="center">
-                <TextField required label="Email" variant="outlined"  
-                           onBlur={handleBlur} onChange={handleChange}/>
-              </Grid>
-              <Grid item p={1} display="flex" justifyContent="center" alignItems="center" flexDirection="column">
-                {/* Mdp requis : au moins 8 caractères + une lettre minuscule + une lettre majuscule */}
-                <TextField required label="Mot de passe" type="password"
-                           autoComplete="current-password" onChange={handleChangePwd} onBlur={handleBlurPwd}/>
-                           <MyFormHelperText />
-                           {/* cf : useFormControl MUI */}
-              </Grid>
-              <Grid item p={1} display="flex" justifyContent="center" alignItems="center">
-                <TextField required label="Confirmation du mot de passe" type="password"
-                           autoComplete="current-password" />
-              </Grid>
-              <Grid item p={2} display="flex" justifyContent="center" alignItems="center">
-              <FormControlLabel required control={<Checkbox />} label="J'ai lu et j'accepte les CGU " />
-              </Grid>
+                <Grid item p={1} display="flex" justifyContent="center" alignItems="center">
+                  <TextField required label="Pseudo" variant="outlined"  
+                             autoFocus onChange={handleChangeUsername} />
+                </Grid>
+                <Grid item p={1} display="flex" justifyContent="center" alignItems="center">
+                  <TextField required label="Email" variant="outlined"  
+                             onBlur={handleBlur} onChange={handleChange}/>
+                </Grid>
+                <Grid item p={1} display="flex" justifyContent="center" alignItems="center" flexDirection="column">
+                  {/* Mdp requis : au moins 8 caractères + une lettre minuscule + une lettre majuscule */}
+                  <TextField required label="Mot de passe" type="password"
+                             autoComplete="current-password" onChange={handleChangePwd} onBlur={handleBlurPwd}/>
+                      <FormHelperText>{errorPwd}</FormHelperText>
+                             {/* cf : useFormControl MUI */}
+                </Grid>
+                <Grid item p={1} display="flex" justifyContent="center" alignItems="center">
+                  <TextField required label="Confirmation du mot de passe" type="password"
+                             autoComplete="current-password" onChange={handleChangeConfirmPwd}/>
+                </Grid>
+                <Grid item p={2} display="flex" justifyContent="center" alignItems="center">
+                  <FormControlLabel required control={<Checkbox />} label="J'ai lu et j'accepte les CGU " />
+                </Grid>
               </FormControl>
 
             </Grid>
           
           <Grid item p={2} display="flex" justifyContent="center" alignItems="center">    
                  {/* TODO : redirect connexion avec wait + toastr "Done : bien inscrits" */}
-            <Link to="/inscription">
-              <Button size="large" className="btn-insc" type="submit" variant="contained"
+              <Button disabled={isLoading} size="large" className="btn-insc" type="submit" variant="contained"
               sx={{ borderRadius: '1.25rem', textTransform: 'capitalize', px: 6, fontWeight: 'bold'}} color="primary">
                 S'inscrire !
               </Button>
-            </Link>
           </Grid>
           <Divider />
           <Grid item p={3} display="flex" justifyContent="center" alignItems="center">            
