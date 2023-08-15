@@ -8,6 +8,7 @@ import { Button, Checkbox, Container, Divider, FormControl, FormControlLabel, Fo
 import { toast } from 'react-toastify';
 import { Link } from 'react-router-dom';
 import BookmarkAddIcon from '@mui/icons-material/BookmarkAdd';
+import { getToken } from '../../utils/token';
 
 const Inscription = () => {
   const form = useForm({
@@ -52,7 +53,7 @@ const Inscription = () => {
   const [errorPwd, setErrorPwd] = useState('');
   
   const handleChangePwd = (e: React.ChangeEvent<HTMLInputElement>) => {
-    form.setValue('password', e.target.value);
+    setPassword(e.target.value);
   };
 
   const handleBlurPwd = useCallback(async () => {
@@ -90,65 +91,74 @@ const Inscription = () => {
   //Submit
   const [isLoading, setIsLoading] = useState(false);
 
-  function handleSubmit(e: FormEvent<HTMLFormElement>): void {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<any> =>{
     e.preventDefault();
 
-    if (password !== confirmPassword) {
-      alert('Les mots de passe ne correspondent pas.');
-      return;
-    }
-    setIsLoading(true);
-
-    // Envoi du formulaire au serveur
     const values = {
       username,
       email,
       password,
-      confirmPassword,
     };
-  
-    const submitForm = async () => {
-      try {
-        const response = await fetch('/api/inscription', {
-          method: 'POST',
-          body: JSON.stringify(values),
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-  
-        if (response.status === 200) {
-          setIsLoading(false);
-          toast.success('Done : Vous êtes bien inscrit !', {
-            position: "top-center",
-            autoClose: 36000,
-            hideProgressBar: false,
-            closeOnClick: false,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "colored",
-            });
-          window.location.href = '/';
-        } else {
-          toast.warning('Une erreur s\'est produite lors de votre inscription', {
-            position: "top-center",
-            autoClose: 36000,
-            hideProgressBar: false,
-            closeOnClick: false,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "colored",
-            });
-          console.log('Erreur lors de l\'inscription');
-        }
-      } catch (error) {
-        console.log(error);
+    
+    if (password !== confirmPassword) {
+      toast.warn('Les mots de passe ne correspondent pas.', {
+        position: "top-center",
+        autoClose: 36000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        })
+      return;
+    }
+
+    const token = getToken(username,password);
+console.log(values.email)
+console.log(values.username)
+console.log(values.password)
+    const requestOptions = {
+      method: 'POST',
+      body: JSON.stringify(values),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+    };
+
+    try {
+      const response = await fetch('http://localhost:8080/api/inscription', requestOptions);
+
+      if (response.status === 200) {
+        setIsLoading(false);
+        toast.success('Done : Vous êtes bien inscrit !', {
+          position: "top-center",
+          autoClose: 36000,
+          hideProgressBar: false,
+          closeOnClick: false,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+          });
+        window.location.href = '/';
+      } else {
+        toast.warning('Une erreur s\'est produite lors de votre inscription', {
+          position: "top-center",
+          autoClose: 36000,
+          hideProgressBar: false,
+          closeOnClick: false,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+          });
+        console.log('Erreur lors de l\'inscription');
       }
-    };
-  
-    submitForm();
+    } catch (error) {
+        console.log(error);
+    }
   };
 
     return (
