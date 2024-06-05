@@ -8,7 +8,7 @@ import { Button, Checkbox, Container, Divider, FormControl, FormControlLabel, Fo
 import { toast } from 'react-toastify';
 import { Link } from 'react-router-dom';
 import BookmarkAddIcon from '@mui/icons-material/BookmarkAdd';
-import { getToken } from '../../utils/token';
+import { getTokenInscription } from '../../utils/token';
 
 const Inscription = () => {
   const form = useForm({
@@ -101,7 +101,7 @@ const Inscription = () => {
     };
     
     if (password !== confirmPassword) {
-      toast.warn('Les mots de passe ne correspondent pas.', {
+      toast.warn('Les mots de passes ne correspondent pas...', {
         position: "top-center",
         autoClose: 36000,
         hideProgressBar: false,
@@ -114,17 +114,15 @@ const Inscription = () => {
       return;
     }
 
-    const token = getToken(username,password);
-console.log(values.email)
-console.log(values.username)
-console.log(values.password)
+    const token = getTokenInscription(username,password);
+
     const requestOptions = {
       method: 'POST',
-      body: JSON.stringify(values),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`,
       },
+      body: JSON.stringify(values)
     };
 
     try {
@@ -132,6 +130,7 @@ console.log(values.password)
 
       if (response.status === 200) {
         setIsLoading(false);
+        window.location.href = '/';
         toast.success('Done : Vous êtes bien inscrit !', {
           position: "top-center",
           autoClose: 36000,
@@ -142,7 +141,6 @@ console.log(values.password)
           progress: undefined,
           theme: "colored",
           });
-        window.location.href = '/';
       } else {
         toast.warning('Une erreur s\'est produite lors de votre inscription', {
           position: "top-center",
@@ -154,9 +152,19 @@ console.log(values.password)
           progress: undefined,
           theme: "colored",
           });
-        console.log('Erreur lors de l\'inscription');
+        console.log('Erreur lors de l\'inscription' + response.body);
       }
     } catch (error) {
+      toast.warning("Oups, une erreur s'est produite !", {
+        position: "top-center",
+        autoClose: 36000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        });
         console.log(error);
     }
   };
@@ -165,7 +173,7 @@ console.log(values.password)
         <Container>
           <Box className="sub" component="form" onSubmit={handleSubmit} autoComplete="off">
             <Grid container direction="column" justifyContent="center" alignItems="center">
-              <Box sx={{ display: 'flex', alignItems: 'center', p:2, fontSize: '1.3rem' }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', p:3, fontSize: '1.3rem' }}>
 
               <BookmarkAddIcon/><span style={{textDecorationLine: 'underline', fontWeight: 'bold'}}> TODO</span> &nbsp; : S'inscrire pour ne plus jamais rien oublier !
               {/* une mémoire qui ne vous fait jamais défaut ? */}
@@ -191,25 +199,24 @@ console.log(values.password)
                   <TextField required label="Confirmation du mot de passe" type="password"
                              autoComplete="current-password" onChange={handleChangeConfirmPwd}/>
                 </Grid>
-                <Grid item p={2} display="flex" justifyContent="center" alignItems="center">
-                  <FormControlLabel required control={<Checkbox />} label="J'ai lu et j'accepte les CGU " />
-                </Grid>
               </FormControl>
-
             </Grid>
-          
-          <Grid item p={2} display="flex" justifyContent="center" alignItems="center">    
+
+          <Grid item pt={2} display="flex" justifyContent="center" alignItems="center">
+                <FormControlLabel className='cgu' required control={<Checkbox />} label="J'ai lu et j'accepte les CGU." />
+          </Grid>
+          <Grid item pt={4} display="flex" justifyContent="center" alignItems="center">    
                  {/* TODO : redirect connexion avec wait + toastr "Done : bien inscrits" */}
               <Button disabled={isLoading} size="large" className="btn-insc" type="submit" variant="contained"
               sx={{ borderRadius: '1.25rem', textTransform: 'capitalize', px: 6, fontWeight: 'bold'}} color="primary">
                 S'inscrire !
               </Button>
           </Grid>
-          <Divider />
-          <Grid item p={3} display="flex" justifyContent="center" alignItems="center">            
+          <Divider sx={{p:1}}/>
+          <Grid item pt={2} pb={4} display="flex" justifyContent="center" alignItems="center">            
             <Link to="/">
-              <Button size="large" className="btn-annuler"variant='outlined' 
-              sx={{ borderRadius: '1.25rem', textTransform: 'capitalize', marginBottom: "30px", px: 6}}>
+              <Button size="large" className="btn-annuler" variant='outlined' 
+              sx={{ borderRadius: '1.25rem', textTransform: 'capitalize', px: 6}}>
                 Retour
               </Button>
             </Link>
