@@ -170,11 +170,12 @@ const Inscription = () => {
   };
 
     return (
+      
+    <div className="background-container">
         <Container>
           <Box className="sub" component="form" onSubmit={handleSubmit} autoComplete="off">
             <Grid container direction="column" justifyContent="center" alignItems="center">
-              <Box sx={{ display: 'flex', alignItems: 'center', p:3, fontSize: '1.3rem' }}>
-
+              <Box sx={{ display: 'flex', alignItems: 'center', p:3, fontSize: '1.3rem', color: 'var(--purple-color)' }}>
               <BookmarkAddIcon/><span style={{textDecorationLine: 'underline', fontWeight: 'bold'}}> TODO</span> &nbsp; : S'inscrire pour ne plus jamais rien oublier !
               {/* une mémoire qui ne vous fait jamais défaut ? */}
               </Box>
@@ -224,6 +225,7 @@ const Inscription = () => {
           
           </Box>
         </Container>
+        </div>
       );
 }
 export default Inscription;

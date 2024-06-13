@@ -16,5 +16,6 @@
 }  
 
 .cgu{
+  color: var(--purple-color);
   text-decoration: underline;
 }
