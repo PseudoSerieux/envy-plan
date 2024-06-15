@@ -42,6 +42,22 @@ const handleNotificationMenuClose = () => {
   setNotifications(0)
 };
 
+//Déconnexion
+const logout = () => {
+  console.log("appui")
+  // Supprime le token du localStorage
+  localStorage.removeItem('authToken');
+
+  // Redirige l'utilisateur vers la page de connexion
+  window.location.href = '/';
+};
+
+const handleLogout = () => {
+  console.log("appui")
+  // Appelle la fonction de déconnexion
+  logout();
+};
+
 return(
 <Box sx={{ pt: 2, flexGrow: 1, display:"flex", alignItems:"center", justifyContent:"center" }}>
       <AppBar position="static" color="inherit" className="boxPrincipale">
@@ -164,7 +180,7 @@ return(
         <MenuItem sx={{fontFamily: 'Josefin Sans', color:"var(--purple-color)", justifyContent:"center"}} onClick={handleMenuClose}>Mon compte</MenuItem>
         <MenuItem sx={{fontFamily: 'Josefin Sans', color:"var(--purple-color)", justifyContent:"center"}} onClick={handleMenuClose}>Aide & Contact</MenuItem>
         <MenuItem sx={{fontFamily: 'Josefin Sans', color:"var(--purple-color)", justifyContent:"center"}} onClick={handleMenuClose}>CGU & Mentions Légales</MenuItem>
-        <MenuItem sx={{fontFamily: 'Josefin Sans', color:"var(--purple-color)", justifyContent:"center"}} onClick={handleMenuClose}>Déconnexion</MenuItem>
+        <MenuItem sx={{fontFamily: 'Josefin Sans', color:"var(--purple-color)", justifyContent:"center"}} onClick={()=>{handleMenuClose(); handleLogout()}}>Déconnexion</MenuItem>
       </Menu>
     </Box>
     );
