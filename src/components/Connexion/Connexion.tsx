@@ -1,12 +1,13 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './Connexion.css'
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import { Button, Container, Divider, FormControl, Grid } from '@mui/material';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import TipsAndUpdatesOutlinedIcon from '@mui/icons-material/TipsAndUpdatesOutlined';
 import { getTokenConnexion } from '../../utils/token';
+import { useSnackbar } from '../../utils/SnackbarContext';
 
 const Connexion = () => {
   const [email, setEmail] = useState('');
@@ -27,7 +28,19 @@ const Connexion = () => {
     setPassword(event.target.value);
   };
 
+//Gestion snackbar de déconnexion
+  const { showSnackbar } = useSnackbar();
+
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.search.includes('logout=true') && location.state && location.state.isDeconnected) {
+      showSnackbar('Vous avez bien été déconnecté, à bientôt !', 'success');
+    }
+  }, [location.search, location.state, showSnackbar]);
+
   //TODO: Créer une modale pour le mot de passe oublié
+
   const handleForgotPassword = () => {
     console.log("Mot de passe oublié");
   };
@@ -68,42 +81,15 @@ const Connexion = () => {
 
         } else {
           // La connexion a échoué, afficher un message d'erreur à l'utilisateur
-          toast.warn("La tentative de connexion a échoué, pas sûr que ce soit de votre faute", {
-            position: "bottom-center",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "colored"
-          }) 
+          showSnackbar("La tentative de connexion a échoué, pas sûr que ce soit de votre faute", 'warning');
         }
       } else {
         console.error('Erreur de réponse du serveur : ', response.status, response.statusText);
-        toast.warn("Erreur lors de la connexion au serveur", {
-          position: "bottom-center",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "colored"    
-        });
+        showSnackbar("Erreur lors de la connexion au serveur", 'error');
        }
     } catch (error) {
       // Afficher un message d'erreur à l'utilisateur
-      toast.warn("Erreur lors de la tentative de connexion (mauvais identifiants ?)", {
-        position: "bottom-center",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "colored"
-      })
+      showSnackbar("Erreur lors de la tentative de connexion (mauvais identifiants ?)", 'error');
       console.log(error);
     }
   };

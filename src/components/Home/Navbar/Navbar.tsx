@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import './Navbar.css'
 import { AppBar, Badge, Box, IconButton, Menu, MenuItem, Toolbar, Typography } from '@mui/material';
+import { useNavigate } from "react-router-dom";
+
 import LogoProjet from "../../../assets/images/envyplan_logo.png";
 
 import NotificationsIcon from '@mui/icons-material/NotificationsNoneOutlined';
@@ -12,7 +14,7 @@ import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 const Navbar = () => {
-  
+  const navigate = useNavigate();
 const menuId = 'search-account-menu';
 //Menu Account
 const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -44,16 +46,14 @@ const handleNotificationMenuClose = () => {
 
 //Déconnexion
 const logout = () => {
-  console.log("appui")
   // Supprime le token du localStorage
   localStorage.removeItem('authToken');
 
   // Redirige l'utilisateur vers la page de connexion
-  window.location.href = '/';
+  navigate('/?logout=true', { state: { isDeconnected: true}}); 
 };
 
 const handleLogout = () => {
-  console.log("appui")
   // Appelle la fonction de déconnexion
   logout();
 };
@@ -110,14 +110,11 @@ return(
         </Toolbar>
       </AppBar>
 
+    {/* Menu pour les notifications */}
       <Menu
         PaperProps={{
           elevation: 0,
-          sx: {
-            overflow: 'visible',
-            border: 1,
-            borderColor: "#9C28E3",
-            mt:'55px',
+          sx: {overflow: 'visible', border: 1, borderColor: "#9C28E3", mt:'55px',
             '&::before': {
               border: 1,
               borderBottomWidth: 4,
@@ -144,15 +141,11 @@ return(
       >
         <MenuItem sx={{fontFamily: 'Josefin Sans', color:"var(--purple-color)", justifyContent:"center"}} onClick={handleNotificationMenuClose}>Notif</MenuItem>
       </Menu>
-    {/* Menu pour les notifications */}
+    {/* Menu pour le compte*/}
        <Menu
         PaperProps={{
           elevation: 0,
-          sx: {
-             overflow: 'visible',
-             border: 1,
-             borderColor: "#9C28E3",
-             mt:'55px',
+          sx: {overflow: 'visible', border: 1, borderColor: "#9C28E3", mt:'55px',
              '&::before': {
                 border: 1,
                 borderBottomWidth: 4,

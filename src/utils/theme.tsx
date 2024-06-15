@@ -23,6 +23,13 @@ export const theme = createTheme({
   //   },
   // },
   components: {
+    MuiSnackbar:{
+      styleOverrides:{
+        root:{
+          top:"-90%",
+        }
+      }
+    },
     MuiAppBar: {
       styleOverrides: {
         root: {
