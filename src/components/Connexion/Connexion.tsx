@@ -147,7 +147,7 @@ const Connexion = () => {
                 Connexion
               </Button>
           </Grid>
-          <Divider sx={{p:2}}> OU </Divider>
+          <Divider sx={{p:2, color: 'var(--purple-color)'}}> OU </Divider>
           <Grid item pb={4} display="flex" justifyContent="center" alignItems="center">
             <Link to="/inscription">
               <Button size="large" variant='outlined' className="btn-inscription" sx={{ borderRadius: '1.25rem', textTransform: 'capitalize', px: 6}}>

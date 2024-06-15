@@ -12,20 +12,19 @@ const App = () => {
 
   return (
     <ThemeProvider theme={theme}>
-    <Router>
-      <Routes>
-        <Route path="/" element={<Connexion/>} />
-        <Route path="/inscription" element={<Inscription />} />
-        <Route path="/index" element={<Home />} />
-      </Routes>
-    </Router>
-    
-{/* 
-     <div>
-      {loggedIn ? <p>Vous êtes connecté !</p> : <Home />}
-    </div> */}
+      <Router>
+        <Routes>
+          <Route path="/" element={<Connexion />} />
+          <Route path="/inscription" element={<Inscription />} />
+          <Route path="/index" element={<Home />} />
+        </Routes>
+      </Router>
+
+      {/*
+         <div>
+          {loggedIn ? <p>Vous êtes connecté !</p> : <Home />}
+        </div> */}
     </ThemeProvider>
-  
   );
 };
 

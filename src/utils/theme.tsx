@@ -23,6 +23,22 @@ export const theme = createTheme({
   //   },
   // },
   components: {
+    MuiAppBar: {
+      styleOverrides: {
+        root: {
+          width: '50%',
+          boxShadow: '0px 10px 20px -15px  #9C28E3',
+          borderRadius: '25px 25px 25px 25px'
+        },
+      }
+    },
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          // boxShadow: "unset"
+        },
+      }
+    },
   MuiOutlinedInput: {
     styleOverrides: {
       root: {
@@ -35,7 +51,7 @@ export const theme = createTheme({
       root: {
         "&$disabled": {
           '& fieldset.MuiOutlinedInput-notchedOutline': {
-             borderColor: "9C28E3",
+            borderColor: "9C28E3",
             //  background: "grey"
           }
         }
