@@ -4,7 +4,6 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import { Button, Container, Divider, FormControl, Grid } from '@mui/material';
 import { Link, useLocation } from 'react-router-dom';
-import { toast } from 'react-toastify';
 import TipsAndUpdatesOutlinedIcon from '@mui/icons-material/TipsAndUpdatesOutlined';
 import { getTokenConnexion } from '../../utils/token';
 import { useSnackbar } from '../../utils/SnackbarContext';
@@ -30,12 +29,17 @@ const Connexion = () => {
 
 //Gestion snackbar de déconnexion
   const { showSnackbar } = useSnackbar();
-
   const location = useLocation();
 
   useEffect(() => {
     if (location.search.includes('logout=true') && location.state && location.state.isDeconnected) {
       showSnackbar('Vous avez bien été déconnecté, à bientôt !', 'success');
+    }
+  }, [location.search, location.state, showSnackbar]);
+
+  useEffect(() => {
+    if (location.search.includes('signin=success') && location.state && location.state.isSignIn) {
+      showSnackbar('Vous êtes bien inscrit. Bienvenue :)', 'success');
     }
   }, [location.search, location.state, showSnackbar]);
 
@@ -45,16 +49,13 @@ const Connexion = () => {
     console.log("Mot de passe oublié");
   };
 
-  //Submit
+  //Partie Submit
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     
-    const values = {
-      email,
-      password,
-    };
+    const values = {email,password};
 
     const token = getTokenConnexion(email, password);
 
@@ -78,7 +79,6 @@ const Connexion = () => {
           localStorage.setItem('authToken', data.token);
           // Rediriger l'utilisateur vers la page appropriée
           window.location.href = '/index';
-
         } else {
           // La connexion a échoué, afficher un message d'erreur à l'utilisateur
           showSnackbar("La tentative de connexion a échoué, pas sûr que ce soit de votre faute", 'warning');

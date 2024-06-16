@@ -22,6 +22,7 @@ const isMenuOpen = Boolean(anchorEl);
 
 const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
   setAnchorEl(event.currentTarget);
+  setAnchorElNotif(null);
 };
 
 const handleMenuClose = () => {
@@ -36,6 +37,8 @@ const isMenuNotificationOpen = Boolean(anchorElNotif);
 
 const handleNotificationMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
   setAnchorElNotif(event.currentTarget);
+  setAnchorEl(null);
+  //Gestion de la notification set à 0 quand on ouvre le menu
   <Badge badgeContent={0} color="error"></Badge>
 };
 
@@ -141,6 +144,7 @@ return(
       >
         <MenuItem sx={{fontFamily: 'Josefin Sans', color:"var(--purple-color)", justifyContent:"center"}} onClick={handleNotificationMenuClose}>Notif</MenuItem>
       </Menu>
+
     {/* Menu pour le compte*/}
        <Menu
         PaperProps={{

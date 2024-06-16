@@ -5,20 +5,21 @@ import './Inscription.css'
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import { Button, Checkbox, Container, Divider, FormControl, FormControlLabel, FormHelperText, Grid, useFormControl } from '@mui/material';
-import { toast } from 'react-toastify';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import BookmarkAddIcon from '@mui/icons-material/BookmarkAdd';
-import { getTokenInscription } from '../../utils/token';
+import { useSnackbar } from '../../utils/SnackbarContext';
 
 const Inscription = () => {
   const form = useForm({
     reValidateMode: 'onBlur',
   });
+  const navigate = useNavigate();
+  const { showSnackbar } = useSnackbar();
 
   const schema = yup.object({
     pseudo:yup.string().required(),
     email:yup.string().email().required(),
-    password: yup.string().required().length(8).uppercase().lowercase(),
+    password: yup.string().required().min(8).uppercase().lowercase(),
   });
 
   //Controle Pseudo
@@ -64,108 +65,49 @@ const Inscription = () => {
 
   useEffect(() => {
     handleBlurPwd();
-  }, [form.formState, handleBlurPwd]);
+  }, [password, handleBlurPwd]);
 
-  //helper down pswd
-  function MyFormHelperText({ errorPwd = 'No error' }) {
-    const { focused } = useFormControl() || {};
-    
-    const helperText = React.useMemo(() => {
-      if (focused) {
-        return 'This field is being focused';
-      }
-    
-        return errorPwd;
-      }, [errorPwd, focused]);
-      console.log(errorPwd);
-      return (<FormHelperText>{helperText}</FormHelperText>);
-    }
-
-    //Controle conf == pwd
-    const [confirmPassword, setConfirmPassword] = useState('');
-
-    const handleChangeConfirmPwd = (e: React.ChangeEvent<HTMLInputElement>) => {
-      setConfirmPassword(e.target.value);
-    };
+  //Controle conf == pwd
+  const [confirmPassword, setConfirmPassword] = useState('');
+  
+  const handleChangeConfirmPwd = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setConfirmPassword(e.target.value);
+  };
 
   //Submit
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<any> =>{
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setIsLoading(true);
 
-    const values = {
-      username,
-      email,
-      password,
-    };
-    
     if (password !== confirmPassword) {
-      toast.warn('Les mots de passes ne correspondent pas...', {
-        position: "top-center",
-        autoClose: 36000,
-        hideProgressBar: false,
-        closeOnClick: false,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "colored",
-        })
+      showSnackbar("Les mots de passe ne correspondent pas :(", 'warning');
+      setIsLoading(false);
       return;
     }
 
-    const token = getTokenInscription(username,password);
-
-    const requestOptions = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
-      body: JSON.stringify(values)
-    };
-
     try {
-      const response = await fetch('http://localhost:8080/api/inscription', requestOptions);
+      const response = await fetch('http://localhost:8080/api/inscription', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, email, password }),
+      });
+
+      const responseData = await response.json();
 
       if (response.status === 200) {
-        setIsLoading(false);
-        window.location.href = '/';
-        toast.success('Done : Vous êtes bien inscrit !', {
-          position: "top-center",
-          autoClose: 36000,
-          hideProgressBar: false,
-          closeOnClick: false,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "colored",
-          });
+        // Redirige l'utilisateur vers la page de connexion
+        navigate('/?signin=success', { state: { isSignIn: true}}); 
       } else {
-        toast.warning('Une erreur s\'est produite lors de votre inscription', {
-          position: "top-center",
-          autoClose: 36000,
-          hideProgressBar: false,
-          closeOnClick: false,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "colored",
-          });
-        console.log('Erreur lors de l\'inscription' + response.body);
+        showSnackbar(`Une erreur s'est produite: ${responseData.message}`, 'error');
       }
     } catch (error) {
-      toast.warning("Oups, une erreur s'est produite !", {
-        position: "top-center",
-        autoClose: 36000,
-        hideProgressBar: false,
-        closeOnClick: false,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "colored",
-        });
-        console.log(error);
+      showSnackbar("Oups, une erreur s'est produite ! (ça ne vient pas de vous)", 'error');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -193,7 +135,7 @@ const Inscription = () => {
                   {/* Mdp requis : au moins 8 caractères + une lettre minuscule + une lettre majuscule */}
                   <TextField required label="Mot de passe" type="password"
                              autoComplete="current-password" onChange={handleChangePwd} onBlur={handleBlurPwd}/>
-                      <FormHelperText>{errorPwd}</FormHelperText>
+                      <FormHelperText id="component-helper-text">8 caractères minimum, 1 majuscule, 1 caractère spécial</FormHelperText>
                              {/* cf : useFormControl MUI */}
                 </Grid>
                 <Grid item p={1} display="flex" justifyContent="center" alignItems="center">
@@ -207,7 +149,6 @@ const Inscription = () => {
                 <FormControlLabel className='cgu' required control={<Checkbox />} label="J'ai lu et j'accepte les CGU." />
           </Grid>
           <Grid item pt={4} display="flex" justifyContent="center" alignItems="center">    
-                 {/* TODO : redirect connexion avec wait + toastr "Done : bien inscrits" */}
               <Button disabled={isLoading} size="large" className="btn-insc" type="submit" variant="contained"
               sx={{ borderRadius: '1.25rem', textTransform: 'capitalize', px: 6, fontWeight: 'bold'}} color="primary">
                 S'inscrire !
